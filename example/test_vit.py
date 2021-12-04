@@ -13,7 +13,7 @@ from itertools import product
 
 import utils.datasets as datasets
 import utils.net_wrap as net_wrap
-from utils.quant_calib import QuantCalibrator, BrecqQuantCalibrator
+from utils.quant_calib import QuantCalibrator, HessianQuantCalibrator
 from utils.models import get_net
 
 def parse_args():
@@ -102,7 +102,7 @@ def experiment_basic(net='vit_base_patch16_384', config="PTQ4ViT"):
     test_loader=g.test_loader()
     calib_loader=g.calib_loader(num=32)
     
-    quant_calibrator = BrecqQuantCalibrator(net,wrapped_modules,calib_loader,sequential=False,batch_size=4) # 16 is too big for ViT-L-16
+    quant_calibrator = HessianQuantCalibrator(net,wrapped_modules,calib_loader,sequential=False,batch_size=4) # 16 is too big for ViT-L-16
     quant_calibrator.batching_quant_calib()
     
     test_classification(net,test_loader)

@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import pickle as pkl
 from itertools import product
 import types
-from utils.quant_calib import BrecqQuantCalibrator, QuantCalibrator
+from utils.quant_calib import HessianQuantCalibrator, QuantCalibrator
 from utils.models import get_net
 import time
 
@@ -26,7 +26,7 @@ def test_all_ablation(name, cfg_modifier=lambda x: x, calib_size=32):
     test_loader=g.test_loader()
     calib_loader=g.calib_loader(num=calib_size)
     
-    quant_calibrator = BrecqQuantCalibrator(net,wrapped_modules,calib_loader,sequential=False,batch_size=4) # 16 is too big for ViT-L-16
+    quant_calibrator = HessianQuantCalibrator(net,wrapped_modules,calib_loader,sequential=False,batch_size=4) # 16 is too big for ViT-L-16
     quant_calibrator.batching_quant_calib()
 
     acc = test_classification(net,test_loader, description=quant_cfg.ptqsl_linear_kwargs["metric"])
@@ -89,7 +89,7 @@ if __name__=='__main__':
         "vit_base_patch16_224",
         "vit_base_patch16_384",
         ]
-    metrics = ["brecq", "cosine"]
+    metrics = ["hessian", "cosine"]
     linear_ptq_settings = [(1,1,1)] # n_V, n_H, n_a
     search_rounds = [3]
     calib_sizes = [32]
@@ -105,6 +105,8 @@ if __name__=='__main__':
             "calib_size":calib_size,
         })
     
-    # multiprocess(test_all_ptqsl, cfg_list, n_gpu=args.n_gpu)  # better to use 3 gpus, due to constraints of memory
-    for cfg in cfg_list:
-        test_all_ablation(**cfg)
+    if args.multiprocess:
+        multiprocess(test_all_ablation, cfg_list, n_gpu=args.n_gpu)
+    else:
+        for cfg in cfg_list:
+            test_all_ablation(**cfg)

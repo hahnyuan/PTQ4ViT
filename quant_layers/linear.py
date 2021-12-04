@@ -141,7 +141,7 @@ class PTQSLQuantLinear(MinMaxQuantLinear):
                 similarity = -tensor_raw.abs() * (tensor_raw - tensor_sim) ** 2
             elif metric == "square_weighted_L2_norm":
                 similarity = -(tensor_raw * (tensor_raw - tensor_sim)) ** 2
-            elif metric == "brecq":
+            elif metric == "hessian":
                 raw_grad = self.raw_grad.reshape_as(tensor_raw)
                 similarity = -(raw_grad * (tensor_raw - tensor_sim)) ** 2
             else:
@@ -414,7 +414,7 @@ class PTQSLBatchingQuantLinear(PTQSLQuantLinear):
                 similarity = -tensor_raw.abs() * (tensor_raw - tensor_sim) ** 2
             elif metric == "square_weighted_L2_norm":
                 similarity = -(tensor_raw * (tensor_raw - tensor_sim)) ** 2
-            elif metric == "brecq":
+            elif metric == "hessian":
                 assert raw_grad != None, f"raw_grad is None in _get_similarity!"
                 raw_grad = raw_grad.reshape_as(tensor_raw)
                 similarity = -(raw_grad * (tensor_raw - tensor_sim)) ** 2

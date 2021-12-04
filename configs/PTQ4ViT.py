@@ -14,7 +14,7 @@ A_bit = {name: bit for name in matmul_name_list}
 B_bit = {name: bit for name in matmul_name_list}
 
 ptqsl_conv2d_kwargs = {
-    "metric": "brecq",
+    "metric": "hessian",
     "eq_alpha": 0.01,
     "eq_beta": 1.2,
     "eq_n": 100,
@@ -23,7 +23,7 @@ ptqsl_conv2d_kwargs = {
     "n_H": 1,
 }
 ptqsl_linear_kwargs = {
-    "metric": "brecq",
+    "metric": "hessian",
     "eq_alpha": 0.01,
     "eq_beta": 1.2,
     "eq_n": 100,
@@ -34,7 +34,7 @@ ptqsl_linear_kwargs = {
     "bias_correction":True # Conventionally I'll not add an actual bias correction in linear
 }
 ptqsl_matmul_kwargs = {
-    "metric": "brecq",
+    "metric": "hessian",
     "eq_alpha": 0.01,
     "eq_beta": 1.2,
     "eq_n": 100,

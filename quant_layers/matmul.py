@@ -166,7 +166,7 @@ class PTQSLQuantMatMul(MinMaxQuantMatMul):
                 similarity = -tensor_raw.abs() * (tensor_raw - tensor_sim) ** 2
             elif metric == "square_weighted_L2_norm":
                 similarity = -(tensor_raw * (tensor_raw - tensor_sim)) ** 2
-            elif metric == "brecq":
+            elif metric == "hessian":
                 raw_grad = self.raw_grad.reshape_as(tensor_raw)
                 similarity = -(raw_grad * (tensor_raw - tensor_sim)) ** 2
             else:
@@ -242,7 +242,7 @@ class PTQSLQuantMatMul(MinMaxQuantMatMul):
 
     def _initialize_intervals(self, A, B):
         # pad A and B for future quantization
-        self._get_padding_parameters(A, B) # put it here because brecq does not use calibration step 1
+        self._get_padding_parameters(A, B) # put it here because hessian does not use calibration step 1
         A_pad = F.pad(A, [0,self.pad_cols_A,0,self.pad_rows_A,0,self.pad_groups_A]).unsqueeze(0).view(1,-1,self.n_G_A,self.crb_groups_A,self.n_V_A,self.crb_rows_A,self.n_H_A,self.crb_cols_A) # shape: 1,B,n_G,crb_groups,n_V,crb_rows,n_H,crb_cols
         B_pad = F.pad(B, [0,self.pad_cols_B,0,self.pad_rows_B,0,self.pad_groups_B]).unsqueeze(0).view(1,-1,self.n_G_B,self.crb_groups_B,self.n_V_B,self.crb_rows_B,self.n_H_B,self.crb_cols_B)
 
@@ -418,7 +418,7 @@ class PTQSLBatchingQuantMatMul(PTQSLQuantMatMul):
     
     def _initialize_intervals(self):
         # pad A and B for future quantization
-        self._get_padding_parameters(self.raw_input[0], self.raw_input[1]) # put it here because brecq does not use calibration step 1
+        self._get_padding_parameters(self.raw_input[0], self.raw_input[1]) # put it here because hessian does not use calibration step 1
 
         # initialize intervals with minmax intervals
         tmp_A_intervals = []
@@ -471,7 +471,7 @@ class PTQSLBatchingQuantMatMul(PTQSLQuantMatMul):
                 similarity = -tensor_raw.abs() * (tensor_raw - tensor_sim) ** 2
             elif metric == "square_weighted_L2_norm":
                 similarity = -(tensor_raw * (tensor_raw - tensor_sim)) ** 2
-            elif metric == "brecq":
+            elif metric == "hessian":
                 assert raw_grad != None, f"No raw_grad in PTQSLBatchingQuantMatMul!"
                 raw_grad = raw_grad.reshape_as(tensor_raw)
                 similarity = -(raw_grad * (tensor_raw - tensor_sim)) ** 2

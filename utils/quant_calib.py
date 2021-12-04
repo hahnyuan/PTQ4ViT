@@ -200,13 +200,13 @@ def matmul_forward_hook(module, input, output):
     module.raw_input[1].append(input[1].cpu().detach())
     module.raw_out.append(output.cpu().detach())
 
-class BrecqQuantCalibrator(QuantCalibrator):
+class HessianQuantCalibrator(QuantCalibrator):
     """
-    Modularization of brecq_quant_calib
+    Modularization of hessian_quant_calib
 
-    Brecq metric needs gradients of layer outputs to weigh the loss,
+    Hessian metric needs gradients of layer outputs to weigh the loss,
     which calls for back propagation in calibration, both sequentially
-    and parallelly. Despite the complexity of bp, brecq quant calibrator
+    and parallelly. Despite the complexity of bp, hessian quant calibrator
     is compatible with other non-gradient quantization metrics.
     """
     def __init__(self, net, wrapped_modules, calib_loader, sequential=False, batch_size=1):
@@ -215,7 +215,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
 
     def quant_calib(self):
         """
-        An implementation of original brecq calibration.
+        An implementation of original hessian calibration.
         """
 
         calib_layers=[]
@@ -223,7 +223,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
             calib_layers.append(name)
         print(f"prepare parallel calibration for {calib_layers}")
 
-        print("start brecq calibration")
+        print("start hessian calibration")
 
         # get raw_pred as target distribution 
         with torch.no_grad():
@@ -246,7 +246,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
                 hooks.append(module.register_forward_hook(conv2d_forward_hook))
             if isinstance(module, MinMaxQuantMatMul):
                 hooks.append(module.register_forward_hook(matmul_forward_hook))
-            if hasattr(module, "metric") and module.metric == "brecq":
+            if hasattr(module, "metric") and module.metric == "hessian":
                 hooks.append(module.register_backward_hook(grad_hook))
             
             # feed in calibration data, and store the data
@@ -270,7 +270,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
             if isinstance(module, MinMaxQuantMatMul):
                 module.raw_input = [torch.cat(_, dim=0) for _ in module.raw_input]
                 module.raw_out = torch.cat(module.raw_out, dim=0)
-            if hasattr(module, "metric") and module.metric == "brecq":
+            if hasattr(module, "metric") and module.metric == "hessian":
                 module.raw_grad = torch.cat(module.raw_grad, dim=0)
             for hook in hooks:
                 hook.remove()
@@ -295,7 +295,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
         for name, module in self.wrapped_modules.items():
             module.mode = "quant_forward"
         
-        print("brecq calibration finished")
+        print("hessian calibration finished")
 
     def batching_quant_calib(self):
         calib_layers=[]
@@ -303,7 +303,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
             calib_layers.append(name)
         print(f"prepare parallel calibration for {calib_layers}")
 
-        print("start brecq calibration")
+        print("start hessian calibration")
 
         # get raw_pred as target distribution 
         with torch.no_grad():
@@ -313,7 +313,7 @@ class BrecqQuantCalibrator(QuantCalibrator):
             torch.cuda.empty_cache()
 
         # assume wrapped modules are in order (true for dict in python>=3.5)
-        q = tqdm(self.wrapped_modules.items(), desc="Brecq")
+        q = tqdm(self.wrapped_modules.items(), desc="Hessian")
         for name, module in q:
             q.set_postfix_str(name)
 
@@ -375,4 +375,4 @@ class BrecqQuantCalibrator(QuantCalibrator):
         for name, module in self.wrapped_modules.items():
             module.mode = "quant_forward"
         
-        print("brecq calibration finished")
+        print("hessian calibration finished")
