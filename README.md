@@ -1,5 +1,9 @@
 # PTQ4ViT
 Post-Training Quantization for Vision transformers.
+We use the twin uniform quantization method to reduce the quantization error on these activation values.
+And we use a Hessian guided metric to evaluate different scaling factors, which improves the accuracy of calibration with a small cost.
+The quantized vision transformers (ViT, DeiT, and Swin) achieve near-lossless prediction accuracy (less than 0.5\% drop at 8-bit quantization) on the ImageNet classification task.
+
 
 ## Install
 
