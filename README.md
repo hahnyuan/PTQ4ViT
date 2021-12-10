@@ -4,6 +4,13 @@ We use the twin uniform quantization method to reduce the quantization error on 
 And we use a Hessian guided metric to evaluate different scaling factors, which improves the accuracy of calibration with a small cost.
 The quantized vision transformers (ViT, DeiT, and Swin) achieve near-lossless prediction accuracy (less than 0.5\% drop at 8-bit quantization) on the ImageNet classification task. Please read the [paper](https://arxiv.org/abs/2111.12293) for details.
 
+## Updates
+
+*10/12/2021*
+Add `utils/int.py`, you can now:
+1. convert calibrated fp32 model into int8
+2. register pre-forward hook in the model, and fetch activation in int8. (We use uint8 to store results
+    of twin quantization, please refer to the paper to see the bits' layout).
 
 ## Install
 
