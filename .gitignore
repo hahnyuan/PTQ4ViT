@@ -16,3 +16,5 @@ ckt
 *.out
 *.zip
 *.json
+test.ipynb
+int_weights

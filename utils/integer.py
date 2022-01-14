@@ -108,3 +108,22 @@ def quantize_int_activation(module, input):
         B_int = B_int.cpu().detach().to(torch.int8)
 
         module.int_input = [A_int, B_int]
+
+
+def get_model_int_weight(wrapped_modules):
+    """
+    Get quantized weights (in int8) of a model.
+
+    Return:
+        A dict, with modules' names as keys, and int weights as values.
+    """
+
+    int_weights = {}
+
+    for name, m in wrapped_modules.items():
+        try:
+            int_weights[name] = quantize_int_weight(m)
+        except:
+            pass
+    
+    return int_weights
