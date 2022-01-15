@@ -31,21 +31,21 @@ if __name__ == "__main__":
     args = parse_args()
 
     names = [
-        "vit_tiny_patch16_224",
-        "vit_small_patch32_224",
-        "vit_small_patch16_224",
-        "vit_base_patch16_224",
+        # "vit_tiny_patch16_224",
+        # "vit_small_patch32_224",
+        # "vit_small_patch16_224",
+        # "vit_base_patch16_224",
         "vit_base_patch16_384",
 
-        "deit_tiny_patch16_224",
-        "deit_small_patch16_224",
-        "deit_base_patch16_224",
-        "deit_base_patch16_384",
+        # "deit_tiny_patch16_224",
+        # "deit_small_patch16_224",
+        # "deit_base_patch16_224",
+        # "deit_base_patch16_384",
 
-        "swin_tiny_patch4_window7_224",
-        "swin_small_patch4_window7_224",
-        "swin_base_patch4_window7_224",
-        "swin_base_patch4_window12_384",
+        # "swin_tiny_patch4_window7_224",
+        # "swin_small_patch4_window7_224",
+        # "swin_base_patch4_window7_224",
+        # "swin_base_patch4_window12_384",
         ]
     config_names = ["PTQ4ViT", "BasePTQ"]
 

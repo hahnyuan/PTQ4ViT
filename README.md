@@ -6,8 +6,24 @@ The quantized vision transformers (ViT, DeiT, and Swin) achieve near-lossless pr
 
 ## Updates
 
+*15/01/2022*
+Add saved quantized models with PTQ4ViT.
+| model        |   link   |
+|:------------:|:--------:|
+| ViT-S/224/32 | [Google](https://drive.google.com/file/d/195JJJKULvaukte6PA9U08oezjd176CTs/view?usp=sharing)   |
+| ViT-S/224    | [Google](https://drive.google.com/file/d/14uEDgRmDBYoKoZtpO9IWMfG8Uvkt_OuL/view?usp=sharing)   |
+| ViT-B/224    | [Google](https://drive.google.com/file/d/1ou6s9Vd-_iyQ7sj7VYET-pRvJA6WMMLA/view?usp=sharing)   |
+| ViT-B/384    | [Google](https://drive.google.com/file/d/1tuU8or8SfQomtoWam7WFTnUxtuw3n7fs/view?usp=sharing)   |
+| DeiT-S/224   | [Google](https://drive.google.com/file/d/1673fX-SuiRlHhm7k0Yyyx_3ynwtvUPyf/view?usp=sharing)   |
+| DeiT-B/224   | [Google](https://drive.google.com/file/d/1WRAtmPF0kDR9iTLc9gv_63aEkOCZ_zOI/view?usp=sharing)   |
+| DeiT-B/384   | [Google](https://drive.google.com/file/d/1mPPlM2ioe4zts_rdKdjZTCUj8KcbquyA/view?usp=sharing)   |
+| Swin-T/224   | [Google](https://drive.google.com/file/d/1bSahHgtL3yFaHPlG-SDtu__YY0zJ8lxr/view?usp=sharing)   |
+| Swin-S/224   | [Google](https://drive.google.com/file/d/1SxAdDTwQaeJFWnHLFXncVocxMNBIPDOE/view?usp=sharing)   |
+| Swin-B/224   | [Google](https://drive.google.com/file/d/19UUUQYJGs5SQaDe27PjY3x1QTBU5hwXm/view?usp=sharing)   |
+| Swin-B/384   | [Google](https://drive.google.com/file/d/1SxAdDTwQaeJFWnHLFXncVocxMNBIPDOE/view?usp=sharing)   |
+
 *10/12/2021*
-Add `utils/int.py`, you can now:
+Add `utils/integer.py`, you can now:
 1. convert calibrated fp32 model into int8
 2. register pre-forward hook in the model, and fetch activation in int8. (We use uint8 to store results
     of twin quantization, please refer to the paper to see the bits' layout).
