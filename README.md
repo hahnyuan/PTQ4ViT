@@ -134,7 +134,7 @@ Results of PTQ4ViT
 
 ## Citation
 ```
-@article{PTQ4ViT_cvpr2022,
+@article{PTQ4ViT_arixv2022,
     title={PTQ4ViT: Post-Training Quantization Framework for Vision Transformers},
     author={Zhihang Yuan, Chenhao Xue, Yiqi Chen, Qiang Wu, Guangyu Sun},
     journal={arXiv preprint arXiv:2111.12293},
