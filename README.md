@@ -7,7 +7,7 @@ The quantized vision transformers (ViT, DeiT, and Swin) achieve near-lossless pr
 ## Updates
 
 *19/07/2022*
-Add discussion Base PTQ, and provide more ablation study results.
+Add discussion on Base PTQ, and provide more ablation study results.
 
 ### Number of Calibration Images
 
