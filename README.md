@@ -7,7 +7,7 @@ The quantized vision transformers (ViT, DeiT, and Swin) achieve near-lossless pr
 ## Updates
 
 *19/07/2022*
-Add discussion on $\#ims$ and Base PTQ, and provide more ablation study results.
+Add discussion Base PTQ, and provide more ablation study results.
 
 ### Number of Calibration Images
 
@@ -42,8 +42,8 @@ Add discussion on $\#ims$ and Base PTQ, and provide more ablation study results.
 One of the targets of PTQ4ViT is to quickly quantize a vision transformer. 
 We have proposed to pre-compute the output and gradient of each layer and compute the influence of scaling factor candidates in batches to reduce the quantization time. 
 As demonstrated in the second table, PTQ4ViT can quantize most vision transformers in several minutes using 32 calibration images. 
-Using $\#ims= 128$ significantly  increases  the  quantization  time.  
-We observe the Top-1 accuracy varies slightly in the first table, demonstrating PTQ4ViT is not very sensitive to $\#ims$.
+Using 128 calibration images significantly  increases  the  quantization  time.  
+We observe the Top-1 accuracy varies slightly in the first table, demonstrating PTQ4ViT is not very sensitive to the number of calibration images.
 
 ### Base PTQ
 Base PTQ is a simple quantization strategy and serves as a benchmark for our experiments. 
@@ -51,8 +51,8 @@ Like PTQ4ViT, we quantize all weights and inputs for fully-connect layers (inclu
 For fully-connected layers, we use layerwise scaling factors $\Delta_W$ for weight quantization and $\Delta_X$ for input quantization; while for matrix multiplication operations, we use $\Delta_A$ and $\Delta_B$ for A's quantization and B's quantization respectively. 
 
 To get the best scaling factors, we apply a linear grid search on the search space. 
-The same as EasyQuantand Liu et al., we take hyper-parameters $\alpha=0.5$, $\beta = 1.2$, search round $\#Round = 1$ and use cosine distance as the metric. 
-Note that in PTQ4ViT, we change the hyper-parameters to $\alpha=0$, $\beta = 1.2$ and search round $\#Round = 3$, which slightly improves the performance.
+The same as EasyQuantand Liu et al., we take hyper-parameters $\alpha=0.5$, $\beta = 1.2$, one search round and use cosine distance as the metric. 
+Note that in PTQ4ViT, we change the hyper-parameters to $\alpha=0$, $\beta = 1.2$ and three search rounds, which slightly improves the performance.
 
 It should be noticed that Base PTQ adopts a parallel quantization paradigm, which makes it essentially different from sequential quantization paradigms such as EasyQuant. 
 In sequential quantization, the input data of the current quantizing layer is generated with all previous layers quantizing weights and activations. 
@@ -69,7 +69,7 @@ It is enough to set the number of quantization intervals $\ge$ 20 (accuracy chan
 It is enough to set the upper bound of m $\ge$ 15 (no accuracy change).
 The best settings of alpha and beta vary from different layers. 
 It is appropriate to set $\alpha=0$ and $\beta=1/2^{k-1}$, which has little impact on search efficiency.
-We observe that $\#Round$ has little impact on the prediction accuracy (accuracy change $<$ 0.05\% when $\#Round>1$).
+We observe that search rounds has little impact on the prediction accuracy (accuracy change $<$ 0.05\% when search rounds $>1$).
 
 We randomly take 32 calibration images to quantize different models 20 times and we observe the fluctuation is not significant. 
 The mean/std of accuracies are: ViT-S/32 $75.55\%/0.055\%$ , ViT-S $80.96\%/0.046\%$, ViT-B $84.12\%/0.068\%$, DeiT-S $79.45\%/0.094\%$ , and Swin-S $83.11\%/0.035\%$.
