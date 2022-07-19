@@ -6,6 +6,75 @@ The quantized vision transformers (ViT, DeiT, and Swin) achieve near-lossless pr
 
 ## Updates
 
+*19/07/2022*
+Add discussion on $\#ims$ and Base PTQ, and provide more ablation study results.
+
+### Number of Calibration Images
+
+| Model        | W8A8 #ims=32 | W6A6 #ims=32 | W8A8 #ims=128 | W6A6 #ims=128 |
+|:------------:|:------------:|:------------:|:-------------:|:-------------:|
+| ViT-S/224/32 | 75.58        | 71.91        |  75.54        | 72.29         |
+| ViT-S/224    | 81.00        | 78.63        |  80.99        | 78.44         |
+| ViT-B/224    | 84.25        | 81.65        |  84.27        | 81.84         |
+| ViT-B/384    | 85.83        | 83.35        |  85.81        | 83.84         |
+| DeiT-S/224   | 79.47        | 76.28        |  79.41        | 76.51         |
+| DeiT-B/224   | 81.48        | 80.25        |  81.54        | 80.30         |
+| DeiT-B/384   | 82.97        | 81.55        |  83.01        | 81.67         |
+| Swin-T/224   | 81.25        | 80.47        |  81.27        | 80.30         |
+| Swin-S/224   | 83.11        | 82.38        |  83.15        | 82.38         |
+| Swin-B/224   | 85.15        | 84.01        |  85.17        | 84.15         |
+| Swin-B/384   | 86.39        | 85.39        |  86.36        | 85.45         |
+
+| Model        | Time #ims=32 | Time #ims=128 |
+|:------------:|:------------:|:-------------:|
+| ViT-S/224/32 | 2 min        | 5 min         |
+| ViT-S/224    | 3 min        | 7 min         |
+| ViT-B/224    | 4 min        | 13 min        |
+| ViT-B/384    | 12 min       | 43 min        |
+| DeiT-S/224   | 3 min        | 7 min         |
+| DeiT-B/224   | 4 min        | 16 min        |
+| DeiT-B/384   | 14 min       | 52 min        |
+| Swin-T/224   | 3 min        | 9 min         |
+| Swin-S/224   | 8 min        | 17 min        |
+| Swin-B/224   | 10 min       | 23 min        |
+| Swin-B/384   | 25 min       | 69 min        |
+
+One of the targets of PTQ4ViT is to quickly quantize a vision transformer. 
+We have proposed to pre-compute the output and gradient of each layer and compute the influence of scaling factor candidates in batches to reduce the quantization time. 
+As demonstrated in the second table, PTQ4ViT can quantize most vision transformers in several minutes using 32 calibration images. 
+Using $\#ims= 128$ significantly  increases  the  quantization  time.  
+We observe the Top-1 accuracy varies slightly in the first table, demonstrating PTQ4ViT is not very sensitive to $\#ims$.
+
+### Base PTQ
+Base PTQ is a simple quantization strategy and serves as a benchmark for our experiments. 
+Like PTQ4ViT, we quantize all weights and inputs for fully-connect layers (including the first projection layer and the last prediction layer), as well as all input matrices of matrix multiplication operations. 
+For fully-connected layers, we use layerwise scaling factors $\Delta_W$ for weight quantization and $\Delta_X$ for input quantization; while for matrix multiplication operations, we use $\Delta_A$ and $\Delta_B$ for A's quantization and B's quantization respectively. 
+
+To get the best scaling factors, we apply a linear grid search on the search space. 
+The same as EasyQuantand Liu et al., we take hyper-parameters $\alpha=0.5$, $\beta = 1.2$, search round $\#Round = 1$ and use cosine distance as the metric. 
+Note that in PTQ4ViT, we change the hyper-parameters to $\alpha=0$, $\beta = 1.2$ and search round $\#Round = 3$, which slightly improves the performance.
+
+It should be noticed that Base PTQ adopts a parallel quantization paradigm, which makes it essentially different from sequential quantization paradigms such as EasyQuant. 
+In sequential quantization, the input data of the current quantizing layer is generated with all previous layers quantizing weights and activations. 
+While in parallel quantization, the input data of the current quantizing layer is simply the raw output of the previous layer. 
+
+In practice, we found sequential quantization on vision transformers suffers from significant accuracy degradation on small calibration datasets. 
+While parallel quantization shows robustness on small calibration datasets. 
+Therefore, we choose parallel quantization for both Base PTQ and PTQ4ViT.
+
+### More Ablation Study
+
+We supply more ablation studies for the hyper-parameters.
+It is enough to set the number of quantization intervals $\ge$ 20 (accuracy change $< 0.3\%$).
+It is enough to set the upper bound of m $\ge$ 15 (no accuracy change).
+The best settings of alpha and beta vary from different layers. 
+It is appropriate to set $\alpha=0$ and $\beta=1/2^{k-1}$, which has little impact on search efficiency.
+We observe that $\#Round$ has little impact on the prediction accuracy (accuracy change $<$ 0.05\% when $\#Round>1$).
+
+We randomly take 32 calibration images to quantize different models 20 times and we observe the fluctuation is not significant. 
+The mean/std of accuracies are: ViT-S/32 $75.55\%/0.055\%$ , ViT-S $80.96\%/0.046\%$, ViT-B $84.12\%/0.068\%$, DeiT-S $79.45\%/0.094\%$ , and Swin-S $83.11\%/0.035\%$.
+
+
 *15/01/2022*
 Add saved quantized models with PTQ4ViT.
 | model        |   link   |
